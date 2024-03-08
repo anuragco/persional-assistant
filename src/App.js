@@ -64,11 +64,11 @@ const App = () => {
 
   const handleVoiceCommand = async (command) => {
     console.log('Raw Command:', command);
-
+  
     const currentTime = new Date().getTime();
     if ((lastSpeechTime && currentTime - lastSpeechTime > 5000) || !lastSpeechTime) {
       setLastSpeechTime(currentTime);
-
+  
       if (command.toLowerCase().includes('hello jarvis') || command.toLowerCase().includes('jarvis')) {
         speakResponse('Hello boss, how can I help you today?');
         console.log('Greeting response sent.');
@@ -118,28 +118,37 @@ const App = () => {
         try {
           const response = await fetch(`http://localhost:5000/gpt3?prompt=${encodeURIComponent(query)}`);
           const data = await response.json();
-
-          if (data && data.choices && data.choices.length > 0) {
+  
+          if (data.storedResponse) {
+            // If a stored response is present, use it
+            const reply = data.storedResponse.trim();
+            console.log('Stored Response:', reply);
+            speakResponse(reply);
+            setIsListening(false);
+            console.log('Response received and processed.');
+          } else if (data && data.choices && data.choices.length > 0) {
+            // If no stored response, use the GPT-3 API response
             const reply = data.choices[0].text.trim();
             console.log('GPT-3 Response:', reply);
             speakResponse(reply);
             setIsListening(false);
             console.log('Response received and processed.');
           } else {
-            console.error('Invalid or empty response from GPT-3 API:', data);
+            console.error('Invalid or empty response:', data);
           }
         } catch (error) {
           console.error('Error in GPT-3 API request:', error);
         }
       }
-
+  
       console.log('Should listen after processing command:', shouldListen);
-
+  
       if (shouldListen) {
         startListening();
       }
     }
   };
+  
 
   const extractSongName = (command) => {
     const matches = command.match(/play a song on youtube (.+)/i);
