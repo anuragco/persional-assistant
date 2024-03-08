@@ -63,92 +63,92 @@ const App = () => {
   };
 
   const handleVoiceCommand = async (command) => {
-    console.log('Raw Command:', command);
-  
-    const currentTime = new Date().getTime();
-    if ((lastSpeechTime && currentTime - lastSpeechTime > 5000) || !lastSpeechTime) {
-      setLastSpeechTime(currentTime);
-  
-      if (command.toLowerCase().includes('hello jarvis') || command.toLowerCase().includes('jarvis')) {
-        speakResponse('Hello boss, how can I help you today?');
-        console.log('Greeting response sent.');
-        return;
-      } else if (command.toLowerCase().includes('open gmail')) {
-        window.open('https://mail.google.com', '_blank');
-        console.log('Opening Gmail...');
-      } else if (command.toLowerCase().includes('open youtube')) {
-        window.open('https://www.youtube.com', '_blank');
-        console.log('Opening YouTube...');
-      } else if (command.toLowerCase().includes('open google')) {
-        window.open('https://www.google.com', '_blank');
-        console.log('Opening Google...');
-      } else if (command.toLowerCase().includes('open whatsapp')) {
-        window.open('https://web.whatsapp.com', '_blank');
-        console.log('Opening WhatsApp...');
-      } else if (command.toLowerCase().includes('open facebook')) {
-        window.open('https://www.facebook.com', '_blank');
-        console.log('Opening Facebook...');
-      } else if (command.toLowerCase().includes('open instagram')) {
-        window.open('https://www.instagram.com', '_blank');
-        console.log('Opening Instagram...');
-      } else if (command.toLowerCase().includes('open tweeter')) {
-        window.open('https://www.x.com', '_blank');
-        console.log('Opening Twitter...');
-      } else if (command.toLowerCase().includes('play a song on youtube')) {
-        const songName = extractSongName(command);
-        if (songName) {
-          const searchQuery = encodeURIComponent(`${songName} official audio`);
-          window.open(`https://www.youtube.com/results?search_query=${searchQuery}`, '_blank');
-          console.log(`Searching for ${songName} on YouTube...`);
-        } else {
-          speakResponse('I am sorry, I did not catch the song name. Can you please repeat it?');
-        }
-      } else if (command.toLowerCase().includes('search on youtube')) {
-        const searchQuery = extractSearchQuery(command);
-        if (searchQuery) {
-          const encodedQuery = encodeURIComponent(searchQuery);
-          window.open(`https://www.youtube.com/results?search_query=${encodedQuery}`, '_blank');
-          console.log(`Searching for ${searchQuery} on YouTube...`);
-        } else {
-          speakResponse('I am sorry, I did not catch the search query. Can you please repeat it?');
-        }
+  console.log('Raw Command:', command);
+
+  const currentTime = new Date().getTime();
+  if ((lastSpeechTime && currentTime - lastSpeechTime > 5000) || !lastSpeechTime) {
+    setLastSpeechTime(currentTime);
+
+    if (command.toLowerCase().includes('hello jarvis') || command.toLowerCase().includes('jarvis')) {
+      speakResponse('Hello boss, how can I help you today?');
+      console.log('Greeting response sent.');
+      return;
+    } else if (command.toLowerCase().includes('open gmail')) {
+      window.open('https://mail.google.com', '_blank');
+      console.log('Opening Gmail...');
+    } else if (command.toLowerCase().includes('open youtube')) {
+      window.open('https://www.youtube.com', '_blank');
+      console.log('Opening YouTube...');
+    } else if (command.toLowerCase().includes('open google')) {
+      window.open('https://www.google.com', '_blank');
+      console.log('Opening Google...');
+    } else if (command.toLowerCase().includes('open whatsapp')) {
+      window.open('https://web.whatsapp.com', '_blank');
+      console.log('Opening WhatsApp...');
+    } else if (command.toLowerCase().includes('open facebook')) {
+      window.open('https://www.facebook.com', '_blank');
+      console.log('Opening Facebook...');
+    } else if (command.toLowerCase().includes('open instagram')) {
+      window.open('https://www.instagram.com', '_blank');
+      console.log('Opening Instagram...');
+    } else if (command.toLowerCase().includes('open tweeter')) {
+      window.open('https://www.x.com', '_blank');
+      console.log('Opening Twitter...');
+    } else if (command.toLowerCase().includes('play a song on youtube')) {
+      const songName = extractSongName(command);
+      if (songName) {
+        const searchQuery = encodeURIComponent(`${songName} official audio`);
+        window.open(`https://www.youtube.com/results?search_query=${searchQuery}`, '_blank');
+        console.log(`Searching for ${songName} on YouTube...`);
       } else {
-        const query = command.trim();
-        console.log('Sending request to GPT-3 API...' + command);
-        try {
-          const response = await fetch(`http://localhost:5000/gpt3?prompt=${encodeURIComponent(query)}`);
-          const data = await response.json();
-  
-          if (data.storedResponse) {
-            // If a stored response is present, use it
-            const reply = data.storedResponse.trim();
-            console.log('Stored Response:', reply);
-            speakResponse(reply);
-            setIsListening(false);
-            console.log('Response received and processed.');
-          } else if (data && data.choices && data.choices.length > 0) {
-            // If no stored response, use the GPT-3 API response
-            const reply = data.choices[0].text.trim();
-            console.log('GPT-3 Response:', reply);
-            speakResponse(reply);
-            setIsListening(false);
-            console.log('Response received and processed.');
-          } else {
-            console.error('Invalid or empty response:', data);
-          }
-        } catch (error) {
-          console.error('Error in GPT-3 API request:', error);
-        }
+        speakResponse('I am sorry, I did not catch the song name. Can you please repeat it?');
       }
-  
-      console.log('Should listen after processing command:', shouldListen);
-  
-      if (shouldListen) {
-        startListening();
+    } else if (command.toLowerCase().includes('search on youtube')) {
+      const searchQuery = extractSearchQuery(command);
+      if (searchQuery) {
+        const encodedQuery = encodeURIComponent(searchQuery);
+        window.open(`https://www.youtube.com/results?search_query=${encodedQuery}`, '_blank');
+        console.log(`Searching for ${searchQuery} on YouTube...`);
+      } else {
+        speakResponse('I am sorry, I did not catch the search query. Can you please repeat it?');
+      }
+    } else {
+      const query = command.trim();
+      console.log('Sending request to GPT-3 API...' + command);
+      try {
+        const response = await fetch(`http://localhost:5000/gpt3?prompt=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        if (data.storedResponse) {
+          // If a stored response is present, use it
+          const reply = data.storedResponse.trim();
+          console.log('Stored Response:', reply);
+          speakResponse(reply);
+          setIsListening(false);
+          console.log('Response received and processed.');
+        } else if (data && data.choices && data.choices.length > 0) {
+          // If no stored response, use the GPT-3 API response
+          const reply = data.choices[0].text.trim();
+          console.log('GPT-3 Response:', reply);
+          speakResponse(reply);
+          setIsListening(false);
+          console.log('Response received and processed.');
+        } else {
+          console.error('Invalid or empty response:', data);
+        }
+      } catch (error) {
+        console.error('Error in GPT-3 API request:', error);
       }
     }
-  };
-  
+
+    console.log('Should listen after processing command:', shouldListen);
+
+    if (shouldListen) {
+      startListening();
+    }
+  }
+};
+
 
   const extractSongName = (command) => {
     const matches = command.match(/play a song on youtube (.+)/i);

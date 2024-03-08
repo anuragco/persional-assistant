@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 5000;
 
-const openaiApiKey = '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';
+const openaiApiKey = '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';
 
 const db = mysql.createConnection({
   host: 'localhost',
